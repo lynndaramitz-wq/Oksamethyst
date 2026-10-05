@@ -141,10 +141,19 @@ body {
   text-transform: uppercase;
   line-height: 1.15;
   -webkit-tap-highlight-color: transparent;
-  transition: transform .15s ease, box-shadow .15s ease;
+    transition: transform .15s ease, filter .15s ease;
 }
 
-.btn:active { transform: scale(.98); }
+.btn:active {
+  transform: scale(.97);
+  filter: brightness(.92);   /* темнее при нажатии: .85 заметнее, .96 слабее */
+}
+
+/* Наведение мышью — только на устройствах с мышкой, чтобы на телефоне кнопка не «залипала» */
+@media (hover: hover) {
+  .btn:hover { filter: brightness(.96); }
+}
+
 .btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; }
 
 .btn__icon {
