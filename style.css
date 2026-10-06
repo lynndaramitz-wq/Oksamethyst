@@ -12,7 +12,12 @@
   --blue: #D1D6E1;
   --blue-dark: #6C7490;
 
-  --w: min(100vw, 430px); /* ширина мобильной колонки */
+    --w: min(100vw, 430px); /* ширина мобильной колонки */
+
+  /* Сколько свободной высоты есть у экрана:
+     0 на маленьких телефонах, до 340px на больших */
+  --extra: clamp(0px, calc(100svh - 600px), 340px);
+  --gap: min(calc(var(--extra) * 0.13), 24px);   /* воздух между строками текста */
 
   --serif: "Cormorant Garamond", "Times New Roman", serif;
   --sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
@@ -21,11 +26,14 @@
 
 * { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--cream);
+}
 
 body {
   margin: 0;
-  background: var(--outside);
+  background: var(--cream);   /* было var(--outside) */
   color: var(--purple);
   font-family: var(--sans);
 }
@@ -39,13 +47,14 @@ body {
   min-height: 100vh;
   min-height: 100svh;
   margin: 0 auto;
-  padding: clamp(16px, 3svh, 52px) 10px 92px;
+    padding: calc(16px + var(--extra) * 0.08) 10px 92px;
   background: var(--cream);
   display: flex;
   flex-direction: column;
 }
 
 @media (min-width: 480px) {
+  body { background: var(--outside); }   /* серо-бежевый вокруг колонки только на компьютере */
   .page { box-shadow: 0 0 40px rgba(94, 66, 120, .12); }
 }
 
@@ -63,7 +72,7 @@ body {
 }
 
 .title {
-  margin: 4px 0 0;
+  margin: calc(4px + var(--extra) * 0.05) 0 0;
   font-family: var(--serif);
   font-weight: 500;
   font-size: clamp(32px, 11.4vw, 48px);
@@ -76,13 +85,17 @@ body {
 
 /* ---------- Приветствие ---------- */
 .intro {
-  margin-top: clamp(26px, 5svh, 60px);
-  padding: 0;   /* было 0 4px */
+  margin-top: calc(26px + min(var(--extra) * 0.26, 60px));
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap);
   text-align: center;
 }
 
 .hello {
-  margin: 0 0 6px;
+  margin: 0;
   font-family: var(--script);
   font-size: clamp(24px, 8vw, 32px);
   line-height: 1;
@@ -98,7 +111,7 @@ body {
 }
 
 .about {
-  margin: 6px auto 0;
+  margin: 0;
   width: 100%;
   min-width: 300px;
   max-width: 650px;
@@ -113,7 +126,7 @@ body {
   display: block;
   width: 14px;
   height: auto;
-  margin: 12px auto 0;
+  margin: calc(12px - var(--gap)) auto 0;   /* сердечко всегда в 12px от текста */
 }
 
 /* ---------- Кнопки ---------- */
@@ -215,7 +228,7 @@ body {
   display: block;
   width: 95px;
   height: auto;
-  margin: clamp(18px, 3svh, 34px) auto 0;
+    margin: calc(clamp(18px, 3svh, 34px) + var(--extra) * 0.06) auto 0;
   mix-blend-mode: multiply; /* убирает белый фон картинки */
 }
 
@@ -224,7 +237,7 @@ body {
   position: absolute;
   z-index: 0;
   left: -4%;
-  bottom: calc(var(--w) * -0.27);
+    bottom: calc(var(--w) * -0.32);   /* было -0.27 */
   width: 108%;
   height: auto;
   pointer-events: none;
