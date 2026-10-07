@@ -12,10 +12,10 @@
   --blue: #D1D6E1;
   --blue-dark: #6C7490;
 
-    --w: min(100vw, 430px); /* ширина мобильной колонки */
+  --w: min(100vw, 430px); /* ширина мобильной колонки */
 
-  /* Сколько свободной высоты есть у экрана:
-     0 на маленьких телефонах, до 340px на больших */
+  /* «Автолейаут»: сколько свободной высоты есть у экрана.
+     0 на маленьких телефонах, до 300px на больших */
   --extra: clamp(0px, calc(100svh - 600px), 340px);
   --gap: min(calc(var(--extra) * 0.13), 24px);   /* воздух между строками текста */
 
@@ -33,7 +33,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--cream);   /* было var(--outside) */
+  background: var(--cream);
   color: var(--purple);
   font-family: var(--sans);
 }
@@ -47,14 +47,14 @@ body {
   min-height: 100vh;
   min-height: 100svh;
   margin: 0 auto;
-    padding: calc(16px + var(--extra) * 0.08) 10px 92px;
+  padding: calc(16px + var(--extra) * 0.08) 10px 92px;
   background: var(--cream);
   display: flex;
   flex-direction: column;
 }
 
 @media (min-width: 480px) {
-  body { background: var(--outside); }   /* серо-бежевый вокруг колонки только на компьютере */
+  body { background: var(--outside); }
   .page { box-shadow: 0 0 40px rgba(94, 66, 120, .12); }
 }
 
@@ -133,6 +133,7 @@ body {
 .links {
   position: relative;
   width: 100%;
+  --lw: 300px;                 /* ширина блока кнопок: от неё считаются бутоны */
   max-width: 300px;
   margin-inline: auto;
   margin-top: 14px;
@@ -157,19 +158,10 @@ body {
   text-transform: uppercase;
   line-height: 1.15;
   -webkit-tap-highlight-color: transparent;
-    transition: transform .15s ease, filter .15s ease;
+  transition: transform .15s ease, box-shadow .15s ease;
 }
 
-.btn:active {
-  transform: scale(.97);
-  filter: brightness(.92);   /* темнее при нажатии: .85 заметнее, .96 слабее */
-}
-
-/* Наведение мышью — только на устройствах с мышкой, чтобы на телефоне кнопка не «залипала» */
-@media (hover: hover) {
-  .btn:hover { filter: brightness(.96); }
-}
-
+.btn:active { transform: scale(.98); }
 .btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; }
 
 .btn__icon {
@@ -228,7 +220,7 @@ body {
   display: block;
   width: 95px;
   height: auto;
-    margin: calc(clamp(18px, 3svh, 34px) + var(--extra) * 0.06) auto 0;
+  margin: calc(clamp(18px, 3svh, 34px) + var(--extra) * 0.06) auto 0;
   mix-blend-mode: multiply; /* убирает белый фон картинки */
 }
 
@@ -237,8 +229,78 @@ body {
   position: absolute;
   z-index: 0;
   left: -4%;
-    bottom: calc(var(--w) * -0.32);   /* было -0.27 */
+  bottom: calc(var(--w) * -0.32);
   width: 108%;
   height: auto;
   pointer-events: none;
+}
+
+/* ================= Широкая версия ================= */
+.corner,
+.decor-bud--2 { display: none; }
+
+/* От 480px: колонка раскрывается на весь экран, фон везде кремовый, футер из двух уголков */
+@media (min-width: 480px) {
+  :root { --w: 430px; }
+  body { background: var(--cream); }
+  .page { max-width: none; box-shadow: none; }
+  .about { max-width: 360px; }   /* на средних экранах текст остаётся в 2 строки */
+
+
+  /* Бутоны вокруг кнопок: размер и положение считаются от ширины блока кнопок (--lw) */
+  .decor-bud {
+    width: calc(var(--lw) * 0.20);
+    right: calc(var(--lw) * -0.25);
+    top: calc(var(--lw) * -0.14);
+  }
+  .decor-bud--2 {                    /* снизу слева: головка вниз, стебель вверх */
+    display: block;
+    top: auto;
+    right: auto;
+    width: calc(var(--lw) * 0.20);
+    left: calc(var(--lw) * -0.20);
+    bottom: calc(var(--lw) * -0.21);
+  }
+
+  .decor-footer { display: none; }
+
+  /* Футер: одна и та же картинка green.png, повёрнута и вставлена в два угла (как в Figma) */
+  .page > .corner {
+    --wi: min(75vw, 800px);          /* ширина картинки: 75% контейнера, но не больше 800px */
+    display: block;
+    position: absolute;
+    z-index: 0;
+    width: var(--wi);
+    aspect-ratio: 1892 / 974;
+    background: url(images/green.png) no-repeat center / 100% 100%;
+    pointer-events: none;
+  }
+  .page > .corner--left {            /* букет в левом нижнем углу, поворот по часовой на 23° */
+    left: calc(var(--wi) * -0.253);
+    bottom: calc(var(--wi) * -0.352);
+    transform: rotate(23deg);
+  }
+  .page > .corner--right {           /* роза в правом нижнем углу, поворот против часовой на 41.5° */
+    right: calc(var(--wi) * -0.243);
+    bottom: calc(var(--wi) * -0.339);
+    transform: rotate(-41.5deg);
+  }
+}
+
+/* От 900px: крупнее текст и кнопки (до 500px), бутоны растут вместе с кнопками */
+@media (min-width: 900px) {
+  .page { align-items: center; justify-content: center; padding: 40px 24px; }
+
+  .eyebrow { font-size: 15px; }
+  .title { font-size: clamp(56px, 5.4vw, 84px); }
+  .intro { margin-top: 44px; --gap: 14px; }
+  .hello { font-size: 40px; }
+  .name  { font-size: 20px; }
+  .about { font-size: 18px; max-width: 520px; min-width: 0; }
+  .intro__heart { width: 18px; margin-top: calc(18px - var(--gap)); }
+
+  .links { --lw: 500px; width: 100%; min-width: 280px; max-width: 500px; margin-top: 20px; gap: 14px; }
+  .btn { min-height: 66px; font-size: 19px; }
+  .btn--main { min-height: 76px; }
+  .divider { width: 170px; margin-top: 36px; }
 }
